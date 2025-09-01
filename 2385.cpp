@@ -53,3 +53,55 @@ class Solution {
             buildGraph(root->right, root, graph);
         }
     };
+
+
+    /**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+    public:
+        int amountOfTime(TreeNode* root, int start) {
+            unordered_map<int, vector<int>> graph;
+            // build graph
+            buildGraph(root, nullptr, graph);
+
+            // bfs
+            queue<int> q;
+            unordered_set<int> visited;
+            unordered_map<int, int> depth;
+            int maxDepth = 0;
+            q.push(start);
+            depth[start] = 0;
+            while (!q.empty()) {
+                int key = q.front();
+                q.pop();
+                visited.insert(key);
+                for (auto neighbor : graph[key]) {
+                    if (visited.find(neighbor) == visited.end()) {
+                        q.push(neighbor);
+                        depth[neighbor] = depth[key] + 1;
+                        maxDepth = depth[key] + 1;
+                    }
+                }
+            }
+
+            return maxDepth;
+        }
+    
+        void buildGraph(TreeNode* root, TreeNode* parent, unordered_map<int, vector<int>>& graph) {
+            if (!root) return;
+            if (parent) graph[root->val].push_back(parent->val);
+            if (root->left) graph[root->val].push_back(root->left->val);
+            if (root->right) graph[root->val].push_back(root->right->val);
+            buildGraph(root->left, root, graph);
+            buildGraph(root->right, root, graph);
+        }
+    };
